@@ -11,3 +11,7 @@
                  "url" args.url}))
   (with [fd (open (+ (expanduser "~") "/.tfsconfig") "w+")]
     (fd.write json-string)))
+
+(defn read-config []
+  (with [fd (open (+ (expanduser "~") "/.tfsconfig"))]
+    (json.load fd)))

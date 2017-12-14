@@ -6,3 +6,4 @@ build:
 pip:
 	pip install validators
 	pip install termcolor
+	pip install requests
