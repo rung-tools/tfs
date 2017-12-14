@@ -1,3 +1,8 @@
 build:
 	hyc src/tfs.hy
-	mv src/tfs.pyc bin
+	hyc src/config.hy
+	mv src/*.pyc ./bin
+
+pip:
+	pip install validators
+	pip install termcolor

@@ -1,7 +1,12 @@
-(import [argparse [ArgumentParser]])
+#!/usr/bin/env hy
+(import [argparse [ArgumentParser]]
+        [config [config]]
+        [termcolor [cprint]]
+        sys)
 
-(defn config [args]
-  (print args))
+(defn show-error [message]
+  (cprint (+ "✗ Error: " (str message)) "red" :file sys.stderr)
+  (exit 1))
 
 (defn make-config-parser [parser]
   (setv config-parser (.add-parser parser "config"
@@ -13,7 +18,7 @@
     :help "TFS personal access token"
     :required True)
   (.add-argument config_parser "--url"
-    :help "TFS API URL, for example, http://<domain>.com/tfs"
+    :help "TFS api url, for example, http://<domain>.com/tfs"
     :required True)
   (.set-defaults config-parser :which "config"))
 
@@ -22,4 +27,7 @@
   (setv subparser (.add-subparsers parser))
   (make-config-parser subparser)
   (setv args (parser.parse-args))
-  (cond [(= args.which "config") (config args)]))
+  (try
+    (cond [(= args.which "config") (config args)])
+    (except [e Exception]
+      (show-error e))))
