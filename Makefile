@@ -1,6 +1,7 @@
 build:
 	hyc src/tfs.hy
 	hyc src/config.hy
+	hyc src/board.hy
 	mv src/*.pyc ./bin
 
 pip:

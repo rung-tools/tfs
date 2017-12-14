@@ -1,6 +1,7 @@
 #!/usr/bin/env hy
 (import [argparse [ArgumentParser]]
         [config [config]]
+        [board [render]]
         [termcolor [cprint]]
         sys)
 
@@ -22,12 +23,15 @@
     :required True)
   (.set-defaults config-parser :which "config"))
 
-(defmain [&rest _]
-  (setv parser (ArgumentParser))
-  (setv subparser (.add-subparsers parser))
-  (make-config-parser subparser)
-  (setv args (parser.parse-args))
-  (try
-    (cond [(= args.which "config") (config args)])
-    (except [e Exception]
-      (show-error e))))
+(defmain [&rest argv]
+  (if (= 1 (len argv))
+    (render)
+    (do
+      (setv parser (ArgumentParser))
+      (setv subparser (.add-subparsers parser))
+      (make-config-parser subparser)
+      (setv args (parser.parse-args))
+      (try
+        (cond [(= args.which "config") (config args)])
+        (except [e Exception]
+          (show-error e))))))
