@@ -20,11 +20,15 @@
 
   (defn init-ui [self]
     (setv self.dims (cond
-      [(= "left" self.mode) (, (- self.max-height 2) (int (/ self.max-width 2)) 1 0)]))
+      [(= "left" self.mode) (, (- self.max-height 1) (int (/ self.max-width 2)) 0 0)]
+      [(= "right" self.mode) (, (- self.max-height 1) (int (/ self.max-width 2)) 0 (int (/ self.max-width 2)))]))
     (setv self.window (apply curses.newwin self.dims))
     (self.window.leaveok 1)
     (self.window.keypad 1)
-    (self.window.bkgd curses.COLOR_GREEN)))
+    (curses.init-pair 1 curses.COLOR-BLUE curses.COLOR-BLACK)
+    (self.window.bkgd (curses.color-pair 1))
+    (self.window.box)
+    (self.window.refresh)))
 
 (defclass Board []
   [window None]
@@ -32,6 +36,7 @@
   [max-width 0]
   [max-height 0]
   [left-pane None]
+  [right-pane None]
 
   (defn --init-- [self window config]
     (setv self.window window)
@@ -46,6 +51,7 @@
     (self.window.leaveok 1)
     (curses.curs_set 0)
     (setv self.left-pane (Pane "left" self))
+    (setv self.right-pane (Pane "right" self))
     (sleep 5)))
 
 (defn board [window prefs]
