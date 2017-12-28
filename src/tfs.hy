@@ -1,7 +1,7 @@
 #!/usr/bin/env hy
 (import [argparse [ArgumentParser]]
         [config [config]]
-        [board [render]]
+        [list [list]]
         [termcolor [cprint]]
         sys)
 
@@ -23,6 +23,12 @@
     :required True)
   (.set-defaults config-parser :which "config"))
 
+(defn make-list-parser [parser]
+  (setv list-parser (.add-parser parser "list"
+    :help "list project collections, workitems, repositories and others"))
+  (list-parser.add-argument "section" :choices (, "project-collections"))
+  (.set-defaults list-parser :which "list"))
+
 (defmain [&rest argv]
   (if (= 1 (len argv))
     (render)
@@ -30,8 +36,11 @@
       (setv parser (ArgumentParser))
       (setv subparser (.add-subparsers parser))
       (make-config-parser subparser)
+      (make-list-parser subparser)
       (setv args (parser.parse-args))
       (try
-        (cond [(= args.which "config") (config args)])
+        (cond
+          [(= args.which "config") (config args)]
+          [(= args.which "list") (list args)])
         (except [e Exception]
           (show-error e))))))
